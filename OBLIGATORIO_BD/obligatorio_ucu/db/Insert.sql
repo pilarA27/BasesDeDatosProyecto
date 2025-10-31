@@ -14,8 +14,8 @@ INSERT INTO programa_academico (nombre_programa, id_facultad, tipo) VALUES
 ('Ing. Informática', 1, 'grado'),
 ('MBA', 2, 'posgrado');
 
--- Participantes
-INSERT INTO participante (ci, nombre, apellido, email) VALUES
+-- Alumnos
+INSERT INTO alumno (ci, nombre, apellido, email) VALUES
 ('4.111.111-1', 'Ana', 'Pérez', 'ana@ucu.edu.uy'),
 ('4.222.222-2', 'Bruno', 'García', 'bruno@ucu.edu.uy'),
 ('4.333.333-3', 'Carla', 'López', 'carla@ucu.edu.uy'),
@@ -24,21 +24,18 @@ INSERT INTO participante (ci, nombre, apellido, email) VALUES
 ('7.666.666-6', 'Laura', 'Docente', 'laura.doc@ucu.edu.uy');
 
 -- Mapear roles
--- Ana/Bruno/Carla: alumnos de grado
-INSERT INTO participante_programa_academico (ci_participante, id_programa, rol)
+INSERT INTO alumno_programa_academico (ci_alumno, id_programa, rol)
 VALUES
 ('4.111.111-1', 1, 'alumno'),
 ('4.222.222-2', 1, 'alumno'),
 ('4.333.333-3', 1, 'alumno');
 
--- Diego/Elena: alumnos posgrado (MBA)
-INSERT INTO participante_programa_academico (ci_participante, id_programa, rol)
+INSERT INTO alumno_programa_academico (ci_alumno, id_programa, rol)
 VALUES
 ('5.444.444-4', 2, 'alumno'),
 ('6.555.555-5', 2, 'alumno');
 
--- Laura: docente (en programa MBA para simplificar)
-INSERT INTO participante_programa_academico (ci_participante, id_programa, rol)
+INSERT INTO alumno_programa_academico (ci_alumno, id_programa, rol)
 VALUES ('7.666.666-6', 2, 'docente');
 
 -- Edificios
@@ -46,7 +43,7 @@ INSERT INTO edificio (nombre_edificio, direccion, departamento) VALUES
 ('Sede Central', 'Av. 8 de Octubre 2738', 'Montevideo'),
 ('Punta Carretas', 'José Ellauri 1234', 'Montevideo');
 
--- Salas (5)
+-- Salas
 INSERT INTO sala (nombre_sala, id_edificio, capacidad, tipo_sala) VALUES
 ('Sala 101', 1, 6, 'libre'),
 ('Sala 102', 1, 6, 'libre'),
@@ -54,13 +51,13 @@ INSERT INTO sala (nombre_sala, id_edificio, capacidad, tipo_sala) VALUES
 ('Sala DOC 1', 1, 8, 'docente'),
 ('Sala 201', 2, 6, 'libre');
 
--- Logins (passwords ejemplo plano para demo)
-INSERT INTO login (correo, contrasena, ci_participante) VALUES
+-- Logins
+INSERT INTO login (correo, contrasena, ci_alumno) VALUES
 ('ana@ucu.edu.uy', 'pass', '4.111.111-1'),
 ('bruno@ucu.edu.uy', 'pass', '4.222.222-2'),
 ('laura.doc@ucu.edu.uy', 'pass', '7.666.666-6');
 
--- Reservas de ejemplo (fechas relativas)
+-- Reservas
 SET @hoy := CURRENT_DATE();
 INSERT INTO reserva (id_sala, fecha, id_turno, creado_por) VALUES
 -- Mañana
@@ -71,8 +68,8 @@ INSERT INTO reserva (id_sala, fecha, id_turno, creado_por) VALUES
 -- Docente exento
 ((SELECT id_sala FROM sala WHERE nombre_sala='Sala DOC 1'), DATE_ADD(@hoy, INTERVAL 2 DAY), 4, '7.666.666-6');
 
--- Participantes en reservas
-INSERT INTO reserva_participante (id_reserva, ci_participante) VALUES
+-- alumnos en reservas
+INSERT INTO reserva_alumno (id_reserva, ci_alumno) VALUES
 (1, '4.111.111-1'), (1, '4.222.222-2'),
 (2, '4.111.111-1'),
 (3, '5.444.444-4'),

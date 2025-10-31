@@ -1,8 +1,8 @@
 import sys
 from funciones_abm import (
-    alta_participante, listar_participantes, modificar_participante, eliminar_participante,
+    alta_alumno, listar_alumnos, modificar_alumno, eliminar_alumno,
     alta_sala, listar_salas, modificar_sala, eliminar_sala,
-    crear_reserva, agregar_participante_a_reserva, cancelar_reserva, listar_reservas,
+    crear_reserva, agregar_alumno_a_reserva, cancelar_reserva, listar_reservas,
     registrar_asistencia, cerrar_reserva, listar_sanciones
 )
 from consultas_bi import ejecutar_bi
@@ -13,9 +13,9 @@ def input_nonempty(prompt):
         raise ValueError("Valor requerido.")
     return val
 
-def menu_participantes():
+def menu_alumnos():
     while True:
-        print("\nPARTICIPANTES")
+        print("\nalumnoS")
         print("1. Alta")
         print("2. Listar")
         print("3. Modificar")
@@ -28,12 +28,12 @@ def menu_participantes():
             apellido = input_nonempty("Apellido: ")
             email = input("Email: ").strip() or None
             try:
-                alta_participante(ci, nombre, apellido, email)
-                print("Participante creado.")
+                alta_alumno(ci, nombre, apellido, email)
+                print("alumno creado.")
             except Exception as e:
                 print("ERROR:", e)
         elif op == "2":
-            rows = listar_participantes()
+            rows = listar_alumnos()
             for r in rows:
                 print(r)
         elif op == "3":
@@ -42,15 +42,15 @@ def menu_participantes():
             apellido = input_nonempty("Nuevo apellido: ")
             email = input("Nuevo email: ").strip() or None
             try:
-                modificar_participante(ci, nombre, apellido, email)
-                print("Participante modificado.")
+                modificar_alumno(ci, nombre, apellido, email)
+                print("alumno modificado.")
             except Exception as e:
                 print("ERROR:", e)
         elif op == "4":
             ci = input_nonempty("CI: ")
             try:
-                eliminar_participante(ci)
-                print("Participante eliminado.")
+                eliminar_alumno(ci)
+                print("alumno eliminado.")
             except Exception as e:
                 print("ERROR:", e)
         elif op == "0":
@@ -108,7 +108,7 @@ def menu_reservas():
     while True:
         print("\nRESERVAS")
         print("1. Crear reserva")
-        print("2. Agregar participante a reserva")
+        print("2. Agregar alumno a reserva")
         print("3. Listar reservas")
         print("4. Cancelar reserva")
         print("5. Registrar asistencia")
@@ -126,8 +126,8 @@ def menu_reservas():
             elif op == "2":
                 id_reserva = int(input_nonempty("ID reserva: "))
                 ci = input_nonempty("CI: ")
-                agregar_participante_a_reserva(id_reserva, ci)
-                print("Participante agregado.")
+                agregar_alumno_a_reserva(id_reserva, ci)
+                print("alumno agregado.")
             elif op == "3":
                 for r in listar_reservas():
                     print(r)
@@ -156,15 +156,14 @@ def menu_bi():
         print("\nREPORTES BI")
         print("1. Salas más reservadas")
         print("2. Turnos más demandados")
-        print("3. Promedio de participantes por sala")
+        print("3. Promedio de alumnos por sala")
         print("4. Reservas por carrera y facultad")
         print("5. % ocupación por edificio")
-        print("6. Reservas y asistencias por tipo participante")
-        print("7. Sanciones por tipo participante")
-        print("8. % efectivas vs no efectivas")
-        print("9. Tasa de uso efectivo por semana")
-        print("10. Top 5 participantes más activos")
-        print("11. Promedio horas por edificio y semana")
+        print("6. Reservas y asistencias por tipo alumno")
+        print("7. Sanciones por tipo alumno")
+        print("8. Tasa de uso efectivo por semana")
+        print("9. Top 5 alumnos más activos")
+        print("10. Promedio horas por edificio y semana")
         print("0. Volver")
         op = input("Opción: ").strip()
         if op == "0":
@@ -179,7 +178,7 @@ def menu_bi():
 def main():
     while True:
         print("\nGESTIÓN DE SALAS DE ESTUDIO")
-        print("1. Participantes")
+        print("1. alumnos")
         print("2. Salas")
         print("3. Reservas")
         print("4. Sanciones (listar)")
@@ -187,7 +186,7 @@ def main():
         print("0. Salir")
         op = input("Opción: ").strip()
         if op == "1":
-            menu_participantes()
+            menu_alumnos()
         elif op == "2":
             menu_salas()
         elif op == "3":

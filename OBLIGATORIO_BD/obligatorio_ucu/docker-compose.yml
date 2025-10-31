@@ -8,9 +8,9 @@ services:
       MYSQL_DATABASE: ucu_salas
       TZ: America/Montevideo
     volumes:
-      - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
-      - ./db/triggers_procedures.sql:/docker-entrypoint-initdb.d/02_triggers.sql:ro
-      - ./db/data_seed.sql:/docker-entrypoint-initdb.d/03_seed.sql:ro
+      - ./db/tablas.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./db/triggers.sql:/docker-entrypoint-initdb.d/02_triggers.sql:ro
+      - ./db/Insert.sql:/docker-entrypoint-initdb.d/03_seed.sql:ro
 
   app:
     image: python:3.11-slim

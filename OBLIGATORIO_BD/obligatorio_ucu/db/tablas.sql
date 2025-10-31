@@ -1,6 +1,5 @@
 -- MySQL 8.x
--- Sistema para Gestión de Salas de Estudio - UCU
--- Esquema base + restricciones mínimas. Sin ORM. Validaciones adicionales en disparadores.
+-- Tablas, restricciones y validaciones
 
 SET NAMES utf8mb4;
 SET time_zone = '+00:00';
@@ -9,7 +8,7 @@ DROP DATABASE IF EXISTS ucu_salas;
 CREATE DATABASE ucu_salas CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE ucu_salas;
 
--- Catálogos y entidades principales
+-- TABLAS PRINCIPALES
 
 CREATE TABLE facultad (
   id_facultad INT AUTO_INCREMENT PRIMARY KEY,
@@ -24,29 +23,28 @@ CREATE TABLE programa_academico (
   FOREIGN KEY (id_facultad) REFERENCES facultad(id_facultad)
 );
 
-CREATE TABLE participante (
+CREATE TABLE alumno (
   ci VARCHAR(20) PRIMARY KEY,
   nombre VARCHAR(100) NOT NULL,
   apellido VARCHAR(100) NOT NULL,
   email VARCHAR(150) UNIQUE
 );
 
--- rol a nivel programa (docente/alumno) y mapea participante con programa
-CREATE TABLE participante_programa_academico (
+CREATE TABLE alumno_programa_academico (
   id_alumno_programa INT AUTO_INCREMENT PRIMARY KEY,
-  ci_participante VARCHAR(20) NOT NULL,
+  ci_alumno VARCHAR(20) NOT NULL,
   id_programa INT NOT NULL,
   rol ENUM('alumno','docente') NOT NULL,
-  UNIQUE KEY uniq_pp (ci_participante, id_programa, rol),
-  FOREIGN KEY (ci_participante) REFERENCES participante(ci),
+  UNIQUE KEY uniq_pp (ci_alumno, id_programa, rol),
+  FOREIGN KEY (ci_alumno) REFERENCES alumno(ci),
   FOREIGN KEY (id_programa) REFERENCES programa_academico(id_programa)
 );
 
 CREATE TABLE login (
   correo VARCHAR(150) PRIMARY KEY,
   contrasena VARCHAR(255) NOT NULL,
-  ci_participante VARCHAR(20) NOT NULL,
-  FOREIGN KEY (ci_participante) REFERENCES participante(ci)
+  ci_alumno VARCHAR(20) NOT NULL,
+  FOREIGN KEY (ci_alumno) REFERENCES alumno(ci)
 );
 
 CREATE TABLE edificio (
@@ -56,7 +54,6 @@ CREATE TABLE edificio (
   departamento VARCHAR(80)
 );
 
--- Añadimos id_sala para integridad y rendimiento, manteniendo campos solicitados
 CREATE TABLE sala (
   id_sala INT AUTO_INCREMENT PRIMARY KEY,
   nombre_sala VARCHAR(120) NOT NULL,
@@ -67,7 +64,7 @@ CREATE TABLE sala (
   FOREIGN KEY (id_edificio) REFERENCES edificio(id_edificio)
 );
 
--- Turnos de 1h entre 08:00 y 23:00 (último 22-23)
+-- Turnos de 1h entre 08:00 y 23:00
 CREATE TABLE turno (
   id_turno INT PRIMARY KEY,
   hora_inicio TIME NOT NULL,
@@ -86,34 +83,34 @@ CREATE TABLE reserva (
   UNIQUE KEY uniq_slot (id_sala, fecha, id_turno),
   FOREIGN KEY (id_sala) REFERENCES sala(id_sala),
   FOREIGN KEY (id_turno) REFERENCES turno(id_turno),
-  FOREIGN KEY (creado_por) REFERENCES participante(ci)
+  FOREIGN KEY (creado_por) REFERENCES alumno(ci)
 );
 
-CREATE TABLE reserva_participante (
+CREATE TABLE reserva_alumno (
   id_reserva INT NOT NULL,
-  ci_participante VARCHAR(20) NOT NULL,
+  ci_alumno VARCHAR(20) NOT NULL,
   fecha_solicitud_reserva TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   asistencia TINYINT(1) NOT NULL DEFAULT 0,
   checkin_ts TIMESTAMP NULL,
-  PRIMARY KEY (id_reserva, ci_participante),
+  PRIMARY KEY (id_reserva, ci_alumno),
   FOREIGN KEY (id_reserva) REFERENCES reserva(id_reserva) ON DELETE CASCADE,
-  FOREIGN KEY (ci_participante) REFERENCES participante(ci)
+  FOREIGN KEY (ci_alumno) REFERENCES alumno(ci)
 );
 
-CREATE TABLE sancion_participante (
+CREATE TABLE sancion_alumno (
   id_sancion INT AUTO_INCREMENT PRIMARY KEY,
-  ci_participante VARCHAR(20) NOT NULL,
+  ci_alumno VARCHAR(20) NOT NULL,
   fecha_inicio DATE NOT NULL,
   fecha_fin DATE NOT NULL,
   motivo VARCHAR(255) NOT NULL,
   id_reserva INT NULL,
-  FOREIGN KEY (ci_participante) REFERENCES participante(ci),
+  FOREIGN KEY (ci_alumno) REFERENCES alumno(ci),
   FOREIGN KEY (id_reserva) REFERENCES reserva(id_reserva),
   CHECK (fecha_fin > fecha_inicio)
 );
 
--- Índices útiles
+-- Indices
 CREATE INDEX idx_reserva_fecha ON reserva(fecha);
 CREATE INDEX idx_reserva_estado ON reserva(estado);
-CREATE INDEX idx_rp_ci ON reserva_participante(ci_participante);
-CREATE INDEX idx_sancion_ci ON sancion_participante(ci_participante);
+CREATE INDEX idx_rp_ci ON reserva_alumno(ci_alumno);
+CREATE INDEX idx_sancion_ci ON sancion_alumno(ci_alumno);

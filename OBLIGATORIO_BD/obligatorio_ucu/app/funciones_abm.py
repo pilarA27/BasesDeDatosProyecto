@@ -14,20 +14,20 @@ def run_query(sql, params=None, fetch=False):
     finally:
         cn.close()
 
-#PARTICIPANTE
-def alta_participante(ci, nombre, apellido, email):
-    sql = "INSERT INTO participante (ci, nombre, apellido, email) VALUES (%s, %s, %s, %s)"
+#alumno
+def alta_alumno(ci, nombre, apellido, email):
+    sql = "INSERT INTO alumno (ci, nombre, apellido, email) VALUES (%s, %s, %s, %s)"
     return run_query(sql, (ci, nombre, apellido, email))
 
-def listar_participantes():
-    return run_query("SELECT * FROM participante ORDER BY apellido, nombre", fetch=True)
+def listar_alumnos():
+    return run_query("SELECT * FROM alumno ORDER BY apellido, nombre", fetch=True)
 
-def modificar_participante(ci, nombre, apellido, email):
-    sql = "UPDATE participante SET nombre=%s, apellido=%s, email=%s WHERE ci=%s"
+def modificar_alumno(ci, nombre, apellido, email):
+    sql = "UPDATE alumno SET nombre=%s, apellido=%s, email=%s WHERE ci=%s"
     return run_query(sql, (nombre, apellido, email, ci))
 
-def eliminar_participante(ci):
-    return run_query("DELETE FROM participante WHERE ci=%s", (ci,))
+def eliminar_alumno(ci):
+    return run_query("DELETE FROM alumno WHERE ci=%s", (ci,))
 
 #SALA
 def alta_sala(nombre_sala, id_edificio, capacidad, tipo_sala):
@@ -46,7 +46,7 @@ def eliminar_sala(id_sala):
 def crear_reserva(id_sala, fecha, id_turno, creado_por):
     return
 
-def agregar_participante_a_reserva(id_reserva, ci):
+def agregar_alumno_a_reserva(id_reserva, ci):
     return
 
 def cancelar_reserva(id_reserva):
